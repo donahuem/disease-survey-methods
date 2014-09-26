@@ -52,3 +52,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Ignore Checkpoints created in iPython NB
+.ipynb_checkpoints
