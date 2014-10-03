@@ -9,6 +9,6 @@ model
 
   for (i in 1:N) {
     #Krep[i] <- dbinom(Nc[i], theta)
-    K[i] ~ dbinom(Nc[i], theta)    
+    K[i] ~ dbin(theta, Nc[i])    #syntax was wrong on this line.  dbin(p,N) not dbinom(N,p)
   }
 }

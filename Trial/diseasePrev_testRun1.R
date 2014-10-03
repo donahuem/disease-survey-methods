@@ -22,7 +22,15 @@ summarize <- ddply(disprev, .(Transect_Number),
 
 newData <- summarize[c(1,2,4:6), ]
 
-ds.data <- list(N=nrow(newData), K=newData$Diseased, Nc=newData$NumColonies)
+#Create some simulated data where we know the prevalence
+Num_Colonies <- sample(seq(30,60,1),50,replace=TRUE)
+Diseased <- rbinom(Num_Colonies,Num_Colonies,.2)  #prevalence of 0.2
+simData <- data.frame(Num_Colonies,Diseased)
+rm(Num_Colonies,Diseased) #remove these local variables to avoid confusion
+######
+
+#ds.data <- list(N=nrow(newData), K=newData$Diseased, Nc=newData$NumColonies)
+ds.data <- list(N=nrow(simData), K=simData$Diseased, Nc=simData$Num_Colonies)
 
 ds.init <- list(list(theta = .5),list(theta=0.2))
 
@@ -35,3 +43,14 @@ prevalence = jags.model("first_Obs_model.R",
                         inits=ds.init,
                         n.chains=n.chains,
                         n.adapt=n.adapt)
+
+load.module("dic")
+prev.jags <- jags.samples(prevalence,variable.names=c("theta"), n.iter=n.iter, n.thin=1)
+prev.coda <- coda.samples(prevalence,variable.names=c("deviance","theta"),n.iter=n.iter)
+prev.df=as.data.frame(rbind(prev.coda))
+
+#some plots (I thinned these just so they would plot faster)
+xyplot(window(prev.coda, thin=10))
+densityplot(window(prev.coda, thin=10))
+autocorr.plot(prev.coda)  (#no autocorrelation issues in the chain - no need to thin)
+hist(prev.jags$theta,freq=TRUE, breaks=500)
