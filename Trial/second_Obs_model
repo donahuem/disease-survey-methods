@@ -1,0 +1,11 @@
+## my second jags file ##
+model
+{
+  theta ~ dbeta(1,1) # prior(s)
+  lamda ~ dgamma(0.001,0.001) # I'm not sure how to decide which distribution to use
+  
+  for (i in 1:N) {
+    Nc[i] ~ dpois(lamda * a[i])
+    K[i] ~ dbin(theta, (lamda * A[i]))
+  }
+}
