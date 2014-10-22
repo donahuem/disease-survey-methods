@@ -1,38 +1,18 @@
 rm(list=ls())
+setwd("C:/Users/Iain/Desktop/Jamie")
 
 library(rjags)
 library(coda)
 library(xtable)
 
-disprev <- read.csv('COUCH_HICORDIS_EXPORT.csv')
-attach(disprev)
+Num_Colonies <- sample(seq(30,60,1), 50, replace=TRUE)
+Diseased <- rbinom(Num_Colonies, Num_Colonies, .2)
+Depth <- sample(seq(5,40,1), 50, replace=TRUE)
+SizeFreq <- sample(seq(5,160,1), 50, replace=TRUE)
+simData <- data.frame(Num_Colonies, Diseased, Depth, SizeFreq)
 
-library(plyr)
-library(tcltk)
-
-#summarize <- ddply(disprev, .(Date, Site, Transect_Number),
- #                  summarise,
-  #                 NumColonies = length(Disease_Type),
-   #                Diseased = sum(Disease_Type == "Healthy"))
-
-summarize <- ddply(disprev, .(Transect_Number),
-                   summarise,
-                   NumColonies = length(Disease_Type),
-                   Diseased = sum(Disease_Type == "Healthy"))
-
-newData <- summarize[c(1,2,4:6), ]
-
-#Create some simulated data where we know the prevalence
-Num_Colonies <- sample(seq(30,60,1),50,replace=TRUE)
-Diseased <- rbinom(Num_Colonies,Num_Colonies,.2)  #prevalence of 0.2
-simData <- data.frame(Num_Colonies,Diseased)
-rm(Num_Colonies,Diseased) #remove these local variables to avoid confusion
-######
-
-#ds.data <- list(N=nrow(newData), K=newData$Diseased, Nc=newData$NumColonies)
-ds.data <- list(N=nrow(simData), K=simData$Diseased, Nc=simData$Num_Colonies)
-
-ds.init <- list(list(theta = .5),list(theta=0.2))
+ds.data <- list(N=nrow(simData), K=simData$Diseased, Nc=simData$Num_Colonies, X=simData$Depth, Y=simData$SizeFreq)
+ds.init <- list(list(theta = .5, b = .1), list(theta=.2, b=.4))
 
 n.adapt=1000
 n.iter=20000
@@ -45,12 +25,12 @@ prevalence = jags.model("first_Obs_model.R",
                         n.adapt=n.adapt)
 
 load.module("dic")
-prev.jags <- jags.samples(prevalence,variable.names=c("theta"), n.iter=n.iter, n.thin=1)
-prev.coda <- coda.samples(prevalence,variable.names=c("deviance","theta"),n.iter=n.iter)
+prev.jags <- jags.samples(prevalence, variable.names=c("theta"), n.iter=n.iter, n.thin=1)
+prev.coda <- coda.samples(prevalence, variable.names=c("deviance", "theta"), n.iter=n.iter)
 prev.df=as.data.frame(rbind(prev.coda))
 
 #some plots (I thinned these just so they would plot faster)
 xyplot(window(prev.coda, thin=10))
 densityplot(window(prev.coda, thin=10))
-autocorr.plot(prev.coda)  (#no autocorrelation issues in the chain - no need to thin)
-hist(prev.jags$theta,freq=TRUE, breaks=500)
+autocorr.plot(prev.coda) 
+  hist(prev.jags$theta, freq=TRUE, breaks=500)
