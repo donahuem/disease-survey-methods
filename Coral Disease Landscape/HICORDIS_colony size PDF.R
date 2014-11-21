@@ -3,6 +3,8 @@ setwd("~/Dropbox/R Files/DZ_methods")#set directory
 data<-read.csv("hicordis_baysianData.csv", header=T)
 attach(data)
 
+area<-3.14*(Colony_Length/2)^2
+
 a<-mean(log(Colony_Length))
 b<-sd(log(Colony_Length))
 
@@ -27,12 +29,26 @@ lines(xfit, yfit, col="black", lwd=2)
 ####Gamma
 rate<-mean(Colony_Length)/var(Colony_Length)
 shape<-rate*mean(Colony_Length)
+scale<-1/rate
 
-h<-hist(Colony_Length, breaks=10, density=10, col="blue", xlab="Colony Size", main="All Colonies", ylim=c(0, 300000),) 
+h<-hist(Colony_Length, breaks=10, density=10, col="blue", xlab="Colony Size", main="All Colonies", ylim=c(0, 1000000),) 
 xfit<-seq(min(Colony_Length),max(Colony_Length),length=40) 
-Sid_GPDF_yfit<-dgamma(xfit,rate=rate,shape=shape) #PDF given shape and rate
+Sid_GPDF_yfit<-dgamma(xfit,scale=scale,shape=shape) #PDF given shape and rate
 yfit <- Sid_GPDF_yfit*diff(h$mids[1:2])*length(Colony_Length) #transform pdf to fit over histogram
 lines(xfit, yfit, col="black", lwd=2)
+
+
+#### Gamma Area
+rate<-mean(area)/var(area)
+shape<-rate*mean(area)
+scale<-1/rate
+
+h<-hist(area, breaks=10, density=10, col="blue", xlab="Area", main="All Colonies", ylim=c(0, 200000),) 
+xfit<-seq(min(area),max(area),length=40) 
+area_GPDF_yfit<-dgamma(xfit,scale=scale,shape=shape) #PDF given shape and rate
+yfit <- area_GPDF_yfit*diff(h$mids[1:2])*length(area) #transform pdf to fit over histogram
+lines(xfit, yfit, col="black", lwd=2)
+
 
 
 ##############
