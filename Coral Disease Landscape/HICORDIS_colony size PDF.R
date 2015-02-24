@@ -5,8 +5,8 @@ attach(data)
 
 area<-3.14*(Colony_Length/2)^2
 
-a<-mean(log(Colony_Length))
-b<-sd(log(Colony_Length))
+a<-mean(Colony_Length)
+b<-sd(Colony_Length)
 
 ###Histograms and PDFs of colony length for ALL SPECIES
 
