@@ -12,6 +12,7 @@
 
 #####Ignore python stuff
 *.py[cod]
+*-checkpoint.ipynb
 
 # C extensions
 *.so
