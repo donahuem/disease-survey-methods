@@ -26,6 +26,11 @@
 # Need to update: as of 6/24/15
 #  - Update sampling methods: BT and ET are still counting colonies in corners 
 #       that are <50% inside.  
+#  - Add clumpiness
+#  - Impose minimum size of 2 cm on colony generation 
+#  - Adjust PlotLandscape so you can plot a small chunk
+#  - Adjust LI so that it is 2cm wide
+#  - Segmented Belt method (calls belt transect )
 """
 #==============================================================================
 import math as m

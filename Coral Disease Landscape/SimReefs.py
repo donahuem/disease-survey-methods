@@ -3,12 +3,12 @@ Created on Wed Jun 24 09:40:37 2015
 
 @author: Megan
 """
-execfile('C:\Users\Megan\Coral Disease Landscape\Landscapes.py')
+execfile('C:\Users\Megan\disease-survey-methods\Coral Disease Landscape\Landscapes.py')
 
 # Generate a test landscape and plot Band, Estimated, and Line
 Ltest = Landscape([50,10],[-2.25,1.1],0.2,0)
 print "Predicted Cover =" + "{:.2f}".format(Ltest.PredictCover(1000)*100)
-Ltest.GenerateColonies(1000)
+Ltest.GenerateColonies(4000, counts=True)
 print "Number of Colonies = " + "{0:02d}".format(Ltest.nCol)
 print "Calculated %Cover = " + "{:.2f}".format(Ltest.PercentCover()*100.)
 print Ltest.BandTransect([5,5],25,2,plot = True)
