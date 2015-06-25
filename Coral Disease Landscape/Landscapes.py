@@ -199,6 +199,15 @@ class Landscape(object):
         if plot == True:
             self.PlotLandscape(transect = "LI",stpt=stpt, length=length, ctcols=ctcols,ctdis=ctdis)
         return(ctcols,ctdis)
+        
+    def SegmentedTransect(self,stpt, width, sglength, gaplength, numsegs, plot=False):
+        ctcols = 0
+        ctdis = 0
+        for i in range(numsegs):
+            startx = stpt[0] + i*(sglength + gaplength)
+            starty = stpt[1]
+            [c,d] = self.BandTransect([startx,starty], sglength, width, plot=plot)
+        return(ctcols,ctdis)
     
     def PlotLandscape(self, transect="none",**kwargs):
         from matplotlib.patches import Rectangle
